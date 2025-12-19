@@ -10,7 +10,7 @@ local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/rel
 
 local Window = WindUI:CreateWindow({
     Title = "Quality x",
-    Icon = "rbxassetid://139586131105498",
+    Icon = "rbxassetid://138614699274576",
     Author = "Hello, I'm Txr, I'm cool.",
     Folder = "MySuperHub",
     Size = UDim2.fromOffset(580, 460),
@@ -44,7 +44,7 @@ ScreenGui.Parent = CoreGui
 ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
 ToggleBtn.Position = UDim2.new(0, 20, 0.5, -25)
 ToggleBtn.BackgroundTransparency = 1
-ToggleBtn.Image = "rbxassetid://139586131105498" 
+ToggleBtn.Image = "rbxassetid://138614699274576" 
 ToggleBtn.Active = true
 ToggleBtn.Draggable = true
 ToggleBtn.Parent = ScreenGui
