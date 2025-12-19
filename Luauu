@@ -809,9 +809,6 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     ApplyAntiRagdoll(char)
 end)
 
-------------------------------------------------
--- Invisible Button
-------------------------------------------------
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
@@ -833,14 +830,14 @@ PlayerTab:Button({
         local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
 
-        -- เก็บตำแหน่งเดิม
+       
         local oldCFrame = hrp.CFrame
 
-        -- TP ไปจุด Invisible
+        
         hrp.CFrame = CFrame.new(INVIS_POS)
         task.wait(0.2)
 
-        -- FFlag
+        
         setfflag("NextGenReplicatorEnabledWrite4", "false")
         print("NextGenReplicatorEnabledWrite4 false")
 
@@ -851,7 +848,7 @@ PlayerTab:Button({
 
         task.wait(0.2)
 
-        -- กลับตำแหน่งเดิม
+       
         hrp.CFrame = oldCFrame
 
         InvisibleRunning = false
