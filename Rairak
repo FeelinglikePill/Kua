@@ -854,3 +854,48 @@ PlayerTab:Button({
         InvisibleRunning = false
     end
 })
+
+
+local MeleeRemote = ReplicatedStorage:WaitForChild("meleeEvent")
+
+local MeleeAuraEnabled = false
+local MELEE_DISTANCE = 10
+local COOLDOWN = 0.25
+
+CombatTab:Toggle({
+    Title = "Damage Aura",
+    Description = "Auto hit nearby players",
+    Default = false,
+    Callback = function(v)
+        MeleeAuraEnabled = v
+    end
+})
+
+task.spawn(function()
+    while task.wait(COOLDOWN) do
+        if not MeleeAuraEnabled then
+            continue
+        end
+
+        local char = LocalPlayer.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        if not hrp then
+            continue
+        end
+
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer then
+                local c = plr.Character
+                local thrp = c and c:FindFirstChild("HumanoidRootPart")
+
+                if thrp then
+                    if (hrp.Position - thrp.Position).Magnitude <= MELEE_DISTANCE then
+                        pcall(function()
+                            MeleeRemote:FireServer(plr)
+                        end)
+                    end
+                end
+            end
+        end
+    end
+end)
