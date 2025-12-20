@@ -812,6 +812,10 @@ end)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+------------------------------------------------
+-- Invisible Button (TP + FFlag + Reset)
+------------------------------------------------
+
 local INVIS_POS = Vector3.new(
     1061.3616943359375,
     98.02265167236328,
@@ -822,22 +826,23 @@ local InvisibleRunning = false
 
 PlayerTab:Button({
     Title = "Invisible",
-    Description = "TP + FFlag trick",
+    Description = "TP + FFlag trick + Reset",
     Callback = function()
         if InvisibleRunning then return end
         InvisibleRunning = true
 
         local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
+        local hum = char:WaitForChild("Humanoid")
 
-       
+        -- เก็บตำแหน่งเดิม
         local oldCFrame = hrp.CFrame
 
-        
+        -- วาปไปจุด Invisible
         hrp.CFrame = CFrame.new(INVIS_POS)
         task.wait(0.2)
 
-        
+        -- FFlag Trick
         setfflag("NextGenReplicatorEnabledWrite4", "false")
         print("NextGenReplicatorEnabledWrite4 false")
 
@@ -848,13 +853,16 @@ PlayerTab:Button({
 
         task.wait(0.2)
 
-       
+        -- กลับตำแหน่งเดิม
         hrp.CFrame = oldCFrame
+        task.wait(0.1)
+
+        -- รีเซ็ตตัวละคร
+        hum.Health = 0
 
         InvisibleRunning = false
     end
 })
-
 
 local MeleeRemote = ReplicatedStorage:WaitForChild("meleeEvent")
 
