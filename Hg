@@ -907,3 +907,77 @@ task.spawn(function()
         end
     end
 end)
+
+------------------------------------------------
+-- Buff Gun Toggle
+------------------------------------------------
+local buffEnabled = false
+local plr = game:GetService("Players").LocalPlayer
+
+-- ===== Functions เดิมของนาย =====
+local function BuffGun(tool)
+    if not buffEnabled then return end
+    if tool:IsA("Tool") then
+        task.wait(0.1)
+        tool:SetAttribute("AutoFire", true)
+        tool:SetAttribute("FireRate", 0.001)
+        tool:SetAttribute("Damage", 999)
+        tool:SetAttribute("IsReloading", false)
+    end
+end
+
+local function ClearBuff(tool)
+    if tool:IsA("Tool") then
+        task.wait(0.1)
+        tool:SetAttribute("AutoFire", false)
+        tool:SetAttribute("FireRate", nil)
+        tool:SetAttribute("Damage", nil)
+        tool:SetAttribute("IsReloading", nil)
+    end
+end
+
+local function HandleBuffOnTool(tool)
+    if buffEnabled then
+        BuffGun(tool)
+    else
+        ClearBuff(tool)
+    end
+end
+
+local function ConnectCharacter(char)
+    char.ChildAdded:Connect(HandleBuffOnTool)
+end
+
+-- ===== Toggle (Combat Tab) =====
+CombatTab:Toggle({
+    Title = "Buff Gun",
+    Description = "AutoFire / Fast Fire / High Damage",
+    Default = false,
+    Callback = function(state)
+        buffEnabled = state
+
+        -- Tool ในมือ
+        local char = plr.Character
+        if char then
+            for _, tool in ipairs(char:GetChildren()) do
+                HandleBuffOnTool(tool)
+            end
+        end
+
+        -- Tool ใน Backpack
+        for _, tool in ipairs(plr.Backpack:GetChildren()) do
+            HandleBuffOnTool(tool)
+        end
+    end
+})
+
+-- ===== Character / Backpack Hook =====
+plr.CharacterAdded:Connect(function(char)
+    ConnectCharacter(char)
+end)
+
+if plr.Character then
+    ConnectCharacter(plr.Character)
+end
+
+plr.Backpack.ChildAdded:Connect(HandleBuffOnTool)
