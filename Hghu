@@ -793,9 +793,6 @@ end)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-------------------------------------------------
--- Invisible Button (TP + FFlag + Reset)
-------------------------------------------------
 
 local INVIS_POS = Vector3.new(
     1061.3616943359375,
@@ -816,14 +813,14 @@ PlayerTab:Button({
         local hrp = char:WaitForChild("HumanoidRootPart")
         local hum = char:WaitForChild("Humanoid")
 
-        -- เก็บตำแหน่งเดิม
+        
         local oldCFrame = hrp.CFrame
 
-        -- วาปไปจุด Invisible
+        
         hrp.CFrame = CFrame.new(INVIS_POS)
         task.wait(0.2)
 
-        -- FFlag Trick
+        
         setfflag("NextGenReplicatorEnabledWrite4", "false")
         print("NextGenReplicatorEnabledWrite4 false")
 
@@ -834,11 +831,11 @@ PlayerTab:Button({
 
         task.wait(0.2)
 
-        -- กลับตำแหน่งเดิม
+        
         hrp.CFrame = oldCFrame
         task.wait(0.1)
 
-        -- รีเซ็ตตัวละคร
+        
         hum.Health = 0
 
         InvisibleRunning = false
@@ -889,13 +886,11 @@ task.spawn(function()
     end
 end)
 
-------------------------------------------------
--- Buff Gun Toggle
-------------------------------------------------
+
 local buffEnabled = false
 local plr = game:GetService("Players").LocalPlayer
 
--- ===== Functions เดิมของนาย =====
+
 local function BuffGun(tool)
     if not buffEnabled then return end
     if tool:IsA("Tool") then
@@ -929,7 +924,7 @@ local function ConnectCharacter(char)
     char.ChildAdded:Connect(HandleBuffOnTool)
 end
 
--- ===== Toggle (Combat Tab) =====
+
 CombatTab:Toggle({
     Title = "Buff Gun",
     Description = "AutoFire / Fast Fire / High Damage",
@@ -937,7 +932,7 @@ CombatTab:Toggle({
     Callback = function(state)
         buffEnabled = state
 
-        -- Tool ในมือ
+        
         local char = plr.Character
         if char then
             for _, tool in ipairs(char:GetChildren()) do
@@ -945,14 +940,14 @@ CombatTab:Toggle({
             end
         end
 
-        -- Tool ใน Backpack
+        
         for _, tool in ipairs(plr.Backpack:GetChildren()) do
             HandleBuffOnTool(tool)
         end
     end
 })
 
--- ===== Character / Backpack Hook =====
+
 plr.CharacterAdded:Connect(function(char)
     ConnectCharacter(char)
 end)
