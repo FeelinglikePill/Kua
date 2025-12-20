@@ -268,25 +268,6 @@ hum.JumpPower = SavedJumpPower
 
 end)
 
-local NoClip = false
-
-PlayerTab:Toggle({
-Title = "NoClip",
-Default = false,
-Callback = function(state)
-NoClip = state
-end
-})
-
-RunService.Stepped:Connect(function()
-if NoClip and LocalPlayer.Character then
-for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
-if part:IsA("BasePart") then
-part.CanCollide = false
-end
-end
-end
-end)
 
 PlayerTab:Slider({
 Title = "WalkSpeed",
