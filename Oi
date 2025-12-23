@@ -957,3 +957,31 @@ if plr.Character then
 end
 
 plr.Backpack.ChildAdded:Connect(HandleBuffOnTool)
+
+-- ตัวแปร Toggle
+local Noclip = false
+
+CombatTab:Toggle({
+    Title = "Noclip",
+    Default = false,
+    Callback = function(v)
+        Noclip = v
+    end
+})
+
+-- ใช้ CFrame เดินทะลุ
+game:GetService("RunService").Heartbeat:Connect(function()
+    if not Noclip then return end
+
+    local char = plr.Character
+    if not char then return end
+
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hrp or not hum then return end
+
+    if hum.MoveDirection.Magnitude > 0 then
+        local dir = hum.MoveDirection.Unit
+        hrp.CFrame = hrp.CFrame + (dir * 0.35) -- ปรับความแรงตรงนี้
+    end
+end)
