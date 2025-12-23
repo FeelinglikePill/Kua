@@ -1086,3 +1086,88 @@ PlayerTab:Slider({
         FlySpeed = v
     end
 })
+
+------------------------------------------------
+-- Fly (Toggle on top) + Speed Slider
+------------------------------------------------
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local plr = Players.LocalPlayer
+local FlyEnabled = false
+local FlySpeed = 4
+
+local LOCK_Y = nil
+local FlyConn
+
+-- Toggle Fly (อยู่ด้านบน)
+PlayerTab:Toggle({
+    Title = "Fly",
+    Description = "Move with camera direction",
+    Default = false,
+    Callback = function(v)
+        FlyEnabled = v
+
+        if FlyConn then
+            FlyConn:Disconnect()
+            FlyConn = nil
+        end
+
+        if not FlyEnabled then
+            LOCK_Y = nil
+            return
+        end
+
+        FlyConn = RunService.Heartbeat:Connect(function()
+            local char = plr.Character
+            if not char then return end
+
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if not hrp or not hum then return end
+
+            local cam = workspace.CurrentCamera
+            local forward = cam.CFrame.LookVector.Unit
+
+            if not LOCK_Y then
+                LOCK_Y = hrp.Position.Y
+            end
+
+            local move = hum.MoveDirection
+            local moveAmount = move:Dot(forward)
+
+            if math.abs(moveAmount) > 0 then
+                local newPos = hrp.Position + (forward * moveAmount * FlySpeed)
+
+                hrp.CFrame = CFrame.lookAt(
+                    newPos,
+                    newPos + forward
+                )
+
+                LOCK_Y = newPos.Y
+            else
+                hrp.CFrame = CFrame.lookAt(
+                    Vector3.new(hrp.Position.X, LOCK_Y, hrp.Position.Z),
+                    Vector3.new(hrp.Position.X, LOCK_Y, hrp.Position.Z) + forward
+                )
+            end
+
+            hrp.AssemblyLinearVelocity = Vector3.zero
+            hrp.AssemblyAngularVelocity = Vector3.zero
+        end)
+    end
+})
+
+-- Slider ปรับความเร็ว (อยู่ใต้ Toggle)
+PlayerTab:Slider({
+    Title = "Fly Speed",
+    Description = "Adjust fly speed",
+    Value = {
+        Min = 1,
+        Max = 10,
+        Default = 4
+    },
+    Callback = function(v)
+        FlySpeed = v
+    end
+})
