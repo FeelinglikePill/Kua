@@ -958,7 +958,8 @@ end
 
 plr.Backpack.ChildAdded:Connect(HandleBuffOnTool)
 
--- ตัวแปร Toggle
+-- noclip
+
 local Noclip = false
 
 PlayerTab:Toggle({
@@ -969,10 +970,10 @@ PlayerTab:Toggle({
     end
 })
 
--- ค่าปรับแรง
-local STEP = 1.2        -- ระยะวาร์ปต่อเฟรม
-local PUSH = 3          -- ดันทะลุ
-local ZERO_VEL = true   -- กันเด้ง / กันเซิร์ฟเวอร์ดึง
+
+local STEP = 1.2        
+local PUSH = 3          
+local ZERO_VEL = true   
 
 game:GetService("RunService").Heartbeat:Connect(function()
     if not Noclip then return end
@@ -988,7 +989,7 @@ game:GetService("RunService").Heartbeat:Connect(function()
     if move.Magnitude > 0 then
         local dir = move.Unit
 
-        -- ทะลุแรง + เร็ว
+        
         hrp.CFrame =
             hrp.CFrame
             * CFrame.new(dir * STEP)
@@ -1002,9 +1003,8 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 
 
-------------------------------------------------
--- Fly (Toggle on top) + Speed Slider
-------------------------------------------------
+-- fly
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -1015,7 +1015,7 @@ local FlySpeed = 4
 local LOCK_Y = nil
 local FlyConn
 
--- Toggle Fly (อยู่ด้านบน)
+
 PlayerTab:Toggle({
     Title = "Fly",
     Description = "Move with camera direction",
@@ -1073,7 +1073,7 @@ PlayerTab:Toggle({
     end
 })
 
--- Slider ปรับความเร็ว (อยู่ใต้ Toggle)
+
 PlayerTab:Slider({
     Title = "Fly Speed",
     Description = "Adjust fly speed",
