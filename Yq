@@ -1006,7 +1006,7 @@ end)
 ------------------------------------------------
 
 local FlyEnabled = false
-local FlySpeed = 5 -- ค่าเริ่มต้น (สัมพันธ์กับ Slider)
+local FlySpeed = 5
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -1026,8 +1026,8 @@ local function StartFly()
     if not hrp then return end
 
     BV = Instance.new("BodyVelocity")
-    BV.Velocity = Vector3.zero
     BV.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+    BV.Velocity = Vector3.zero
     BV.Parent = hrp
 
     BG = Instance.new("BodyGyro")
@@ -1037,29 +1037,17 @@ local function StartFly()
     BG.Parent = hrp
 
     flyConn = RunService.RenderStepped:Connect(function()
-        local moveDir = Vector3.zero
+        local dir = Vector3.zero
 
-        if UIS:IsKeyDown(Enum.KeyCode.W) then
-            moveDir += cam.CFrame.LookVector
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.S) then
-            moveDir -= cam.CFrame.LookVector
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.A) then
-            moveDir -= cam.CFrame.RightVector
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.D) then
-            moveDir += cam.CFrame.RightVector
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.Space) then
-            moveDir += Vector3.new(0,1,0)
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
-            moveDir -= Vector3.new(0,1,0)
-        end
+        if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
+        if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
+        if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.new(0,1,0) end
+        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then dir -= Vector3.new(0,1,0) end
 
-        if moveDir.Magnitude > 0 then
-            BV.Velocity = moveDir.Unit * (FlySpeed * 10)
+        if dir.Magnitude > 0 then
+            BV.Velocity = dir.Unit * (FlySpeed * 10)
         else
             BV.Velocity = Vector3.zero
         end
@@ -1077,7 +1065,7 @@ end
 ------------------------------------------------
 -- Toggle Fly
 ------------------------------------------------
-CombatTab:Toggle({
+PlayerTab:Toggle({
     Title = "Fly",
     Default = false,
     Callback = function(v)
@@ -1091,13 +1079,16 @@ CombatTab:Toggle({
 })
 
 ------------------------------------------------
--- Slider ปรับความไว (1 - 10)
+-- Slider Fly Speed (ถูกต้อง ใช้ Value)
 ------------------------------------------------
-CombatTab:Slider({
+PlayerTab:Slider({
     Title = "Fly Speed",
-    Min = 1,
-    Max = 10,
-    Default = 5,
+    Step = 1,
+    Value = {
+        Min = 1,
+        Max = 10,
+        Default = 5
+    },
     Callback = function(v)
         FlySpeed = v
     end
