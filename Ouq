@@ -961,7 +961,7 @@ plr.Backpack.ChildAdded:Connect(HandleBuffOnTool)
 -- ตัวแปร Toggle
 local Noclip = false
 
-CombatTab:Toggle({
+PlayerTab:Toggle({
     Title = "Noclip",
     Default = false,
     Callback = function(v)
@@ -969,7 +969,11 @@ CombatTab:Toggle({
     end
 })
 
--- ใช้ CFrame เดินทะลุ
+-- ค่าปรับแรง
+local STEP = 1.2        -- ระยะวาร์ปต่อเฟรม
+local PUSH = 3          -- ดันทะลุ
+local ZERO_VEL = true   -- กันเด้ง / กันเซิร์ฟเวอร์ดึง
+
 game:GetService("RunService").Heartbeat:Connect(function()
     if not Noclip then return end
 
@@ -980,8 +984,19 @@ game:GetService("RunService").Heartbeat:Connect(function()
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hrp or not hum then return end
 
-    if hum.MoveDirection.Magnitude > 0 then
-        local dir = hum.MoveDirection.Unit
-        hrp.CFrame = hrp.CFrame + (dir * 0.35) -- ปรับความแรงตรงนี้
+    local move = hum.MoveDirection
+    if move.Magnitude > 0 then
+        local dir = move.Unit
+
+        -- ทะลุแรง + เร็ว
+        hrp.CFrame =
+            hrp.CFrame
+            * CFrame.new(dir * STEP)
+            * CFrame.new(0, 0, -PUSH)
+
+        if ZERO_VEL then
+            hrp.AssemblyLinearVelocity = Vector3.zero
+            hrp.AssemblyAngularVelocity = Vector3.zero
+        end
     end
 end)
