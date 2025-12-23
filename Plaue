@@ -1002,28 +1002,25 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 
 ------------------------------------------------
--- Fly (Infinite Yield Style)
+-- Fly (Joystick / Mobile) + Speed Slider
 ------------------------------------------------
-
 local FlyEnabled = false
-local FlySpeed = 5
+local FlySpeed = 5 -- ค่าเริ่มต้น
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
-
-local plr = Players.LocalPlayer
 local cam = workspace.CurrentCamera
-
-local BV, BG
-local flyConn
+local BV, BG, flyConn
+local hum
 
 local function StartFly()
-    local char = plr.Character
+    local char = LocalPlayer.Character
     if not char then return end
 
-    local hrp = char:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
+    local hrp = char:WaitForChild("HumanoidRootPart")
+    hum = char:WaitForChild("Humanoid")
+
+    -- กันติดพื้น
+    hum.PlatformStand = true
+    hum:ChangeState(Enum.HumanoidStateType.Physics)
 
     BV = Instance.new("BodyVelocity")
     BV.MaxForce = Vector3.new(1e9, 1e9, 1e9)
@@ -1037,20 +1034,24 @@ local function StartFly()
     BG.Parent = hrp
 
     flyConn = RunService.RenderStepped:Connect(function()
-        local dir = Vector3.zero
+        if not FlyEnabled then return end
 
-        if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
-        if UIS:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
-        if UIS:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
-        if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
-        if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.new(0,1,0) end
-        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then dir -= Vector3.new(0,1,0) end
+        local moveDir = hum.MoveDirection
+        local velocity = Vector3.zero
 
-        if dir.Magnitude > 0 then
-            BV.Velocity = dir.Unit * (FlySpeed * 10)
-        else
-            BV.Velocity = Vector3.zero
+        if moveDir.Magnitude > 0 then
+            local camCF = cam.CFrame
+            local forward = camCF.LookVector
+            local right = camCF.RightVector
+
+            velocity = (right * moveDir.X) + (forward * moveDir.Z)
         end
+
+        BV.Velocity = Vector3.new(
+            velocity.X * FlySpeed * 12,
+            0,
+            velocity.Z * FlySpeed * 12
+        )
 
         BG.CFrame = cam.CFrame
     end)
@@ -1060,17 +1061,23 @@ local function StopFly()
     if flyConn then flyConn:Disconnect() flyConn = nil end
     if BV then BV:Destroy() BV = nil end
     if BG then BG:Destroy() BG = nil end
+
+    if hum then
+        hum.PlatformStand = false
+        hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
 end
 
 ------------------------------------------------
 -- Toggle Fly
 ------------------------------------------------
 PlayerTab:Toggle({
-    Title = "Fly",
+    Title = "Fly (Joystick)",
+    Description = "Mobile Fly / Infinite Yield style",
     Default = false,
-    Callback = function(v)
-        FlyEnabled = v
-        if v then
+    Callback = function(state)
+        FlyEnabled = state
+        if state then
             StartFly()
         else
             StopFly()
@@ -1079,7 +1086,7 @@ PlayerTab:Toggle({
 })
 
 ------------------------------------------------
--- Slider Fly Speed (ถูกต้อง ใช้ Value)
+-- Slider Speed
 ------------------------------------------------
 PlayerTab:Slider({
     Title = "Fly Speed",
