@@ -1086,3 +1086,32 @@ PlayerTab:Slider({
         FlySpeed = v
     end
 })
+
+
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local plr = Players.LocalPlayer
+local InfiniteJump = false
+
+PlayerTab:Toggle({
+    Title = "Infinite Jump",
+    Description = "Jump unlimited times",
+    Default = false,
+    Callback = function(v)
+        InfiniteJump = v
+    end
+})
+
+UserInputService.JumpRequest:Connect(function()
+    if not InfiniteJump then return end
+
+    local char = plr.Character
+    if not char then return end
+
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
