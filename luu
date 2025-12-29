@@ -101,7 +101,7 @@ local ESPTab      = Window:Tab({Title = "ESP",      Icon = "eye"})
 
 local FOVRadius  = 150
 local FOVEnabled = false
-local sides = 32
+local sides = 10
 local FOVLines = {}
 
 for i = 1, sides do
